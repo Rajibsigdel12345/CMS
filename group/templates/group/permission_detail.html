@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block Group %}
+    <div class="page-wrapper">
+        <!-- MENU SIDEBAR-->
+        {% include 'sidebar.html'%}
+        <!-- END MENU SIDEBAR-->
+        <section class ="message-section">
+              {% include 'messages.html'%}
+        </section>
+        <!-- PAGE CONTAINER-->
+        <div class="page-container2">
+        
+            <!-- HEADER DESKTOP-->
+            {% include 'header.html'%}
+            <!-- END HEADER DESKTOP-->
+<!-- Button trigger modal -->
+
+            <!-- Modal -->
+            <div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Add Group</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method = "post" action= "{% url 'group:addgroup' %}">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="addgroupinput">Group Name</label>
+                        <input type="text" class="form-control" name = 'group_name' id="addgroupinput" placeholder="Group Name">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Save changes</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+                </form>
+                </div>
+            </div>
+            </div>
+            <!-- BREADCRUMB-->
+            {% comment %} {% include 'breadcrumb.html' %} {% endcomment %}
+            <!-- END BREADCRUMB-->
+
+            <!-- MAIN CONTENT-->
+            <div class="main-content">
+                <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                    
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!-- DATA TABLE -->
+                                <div class="table-data__tool">
+                                    <div class="table-data__tool-left">
+                                        <div class="rs-select2--light rs-select2--md">
+                                            <select class="js-select2" name="property">
+                                            <option selected="selected">Select Group</option>
+                                            {% for group in groups %}
+                                                <option value="{{group.id}}">{{group.name}}</option>
+                                            {% endfor %}
+                                            </select>
+                                            <div class="dropDownSelect2"></div>
+                                        </div>
+                                        <div class="rs-select2--light rs-select2--sm">
+                                            <select class="js-select2" name="time">
+                                                <option selected="selected">Today</option>
+                                                <option value="">3 Days</option>
+                                                <option value="">1 Week</option>
+                                            </select>
+                                            <div class="dropDownSelect2"></div>
+                                        </div>
+                                        <button class="au-btn-filter">
+                                            <i class="zmdi zmdi-filter-list"></i>filters</button>
+                                    </div>
+                                    <div class="table-data__tool-right">
+                                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addGroup"><i class="zmdi zmdi-plus"></i> Add Group</button>
+                                        <button class="au-btn au-btn-icon au-btn--green au-btn--small">
+                                            <i class="zmdi zmdi-plus"></i> add item</button>
+                                            
+                                        <div class="rs-select2--dark rs-select2--sm rs-select2--dark2">
+                                            <select class="js-select2" name="type">
+                                                <option selected="selected">Export</option>
+                                                <option value="">Option 1</option>
+                                                <option value="">Option 2</option>
+                                            </select>
+                                            <div class="dropDownSelect2"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive table-responsive-data2">
+                                    <table class="table table-data2">
+                                        <thead>
+                                            <tr class = "tr-shadow">
+                                                <th width="5%">
+                                                    <label class="au-checkbox">
+                                                        <input type="checkbox">
+                                                        <span class="au-checkmark"></span>
+                                                    </label>
+                                                </th>
+                                                <th>Module Name</th>
+                                                <th >View</th>
+                                                <th >Add</th>
+                                                <th >Update</th>
+                                                <th >Delete</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="tr-shadow" width="100%">
+                                                <td>
+                                                    <label class="au-checkbox">
+                                                        <input type="checkbox">
+                                                        <span class="au-checkmark"></span>
+                                                    </label>
+                                                </td>
+                                                <td colspan="7">Lori Lynch</td>
+                                            </tr>
+                                            <tr class="spacer"></tr>
+                                            {% for group in groups %}
+                                            <tr class="tr-shadow">
+                                                <td>
+                                                    <label class="au-checkbox">
+                                                        <input type="checkbox">
+                                                        <span class="au-checkmark"></span>
+                                                    </label>
+                                                </td>
+                                                <td>{{group.name}}</td>
+                                                {% for permission in group.module %}
+                                                <td>
+                                                    <label class="au-checkbox">
+                                                        <input name = "{{group.name}}-View"type="checkbox" checked>
+                                                        <span class="au-checkmark"></span>
+                                                    </label>
+                                                </td>
+                                                {% endfor %}
+                                                {% comment %} <td>
+                                                    <label class="au-checkbox">
+                                                        <input type="checkbox" name="{{group.name}}-Add">
+                                                        <span class="au-checkmark"></span>
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="au-checkbox">
+                                                        <input type="checkbox" name="{{group.name}}-Update">
+                                                        <span class="au-checkmark"></span>
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="au-checkbox">
+                                                        <input type="checkbox" name="{{group.name}}-Delete">
+                                                        <span class="au-checkmark"></span>
+                                                    </label>
+                                                </td> {% endcomment %}
+                                                <td>
+                                                    <button><i class="fa fa-paper-plane" aria-hidden="true"></i></button> 
+                                                </td>
+                                            </tr>
+                                            <tr class="spacer"></tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- END DATA TABLE -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+                        
+{% endblock %}

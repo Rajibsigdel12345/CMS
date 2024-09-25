@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block Group %}
+    <div class="page-wrapper pb-0">
+        <!-- MENU SIDEBAR-->
+        {% include 'sidebar.html'%}
+        <!-- END MENU SIDEBAR-->
+        <section class ="message-section">
+              {% include 'messages.html'%}
+        </section>
+        <!-- PAGE CONTAINER-->
+        <div class="page-container2">
+        
+            <!-- HEADER DESKTOP-->
+            {% include 'header.html'%}
+            <!-- END HEADER DESKTOP-->
+<!-- Button trigger modal -->
+
+            <!-- Modal -->
+
+            <!-- Edit Group Modal-->
+
+            <!-- BREADCRUMB-->
+            {% comment %} {% include 'breadcrumb.html' %} {% endcomment %}
+            <!-- END BREADCRUMB-->
+
+            <!-- MAIN CONTENT-->
+            <div class="main-content mt-lg-5 pt-lg-4 pb-0">
+                <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                    
+                        <div class="row">
+                            <div class="col-lg-10  mx-auto">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <strong>Employee</strong>
+                                        <small> Details</small>
+                                    </div>
+                                    <form method = "post" action = "{% url 'employee:addemployee' %}">
+                                    {% csrf_token %}
+                                    <div class="card-body card-block">
+                                         {% for field in form %}
+                                          <div class="form-group">
+                                              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                              {{ field }}
+                                              {% if field.errors %}
+                                                  <div class="text-danger">
+                                                      {% for error in field.errors %}
+                                                          <p>{{ error }}</p>
+                                                      {% endfor %}
+                                                  </div>
+                                              {% endif %}
+                                          </div>
+                                      {% endfor %}
+                                      <button type="submit" class="btn btn-primary">Add Employee</button>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+      <script>
+      const edit_form_element = document.getElementById('edit-group-form')
+      document.querySelectorAll('button[data-target="#editGroup"]').forEach(button => {
+          button.addEventListener('click', function() {
+              const group_id = this.getAttribute('data-group-id')
+              console.log(group_id)
+              edit_form_element.action = `{% url 'group:update_group' 0 %}`.replace('0', group_id)
+          })
+      })
+    </script>  
+{% endblock %}

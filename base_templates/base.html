@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="au theme template">
+    <meta name="author" content="Hau Nguyen">
+    <meta name="keywords" content="au theme template">
+
+    <!-- Title Page-->
+    <title id = "page-title">{{title}}</title>
+    {% include 'bootstrap.html' %}
+    <style>
+        .message-section{
+      height: 40px;
+      width: 50%; 
+      margin: auto; 
+      position: absolute;
+      top: 0%;
+      right: 50%;
+      left: 50%;
+      translate: -50%;
+      z-index: 100000;
+      position: sticky;
+    }
+        .alert-dismissible .btn-close{
+      
+      font-size: 0.7rem;
+      padding: 1% 2%;
+      margin: 0.6%;
+      z-index: 10;
+      /* height: 40px; */
+    }
+    </style>
+</head>
+<body class = "animsition">
+  {% block Login %}
+  {% endblock %}
+  {% block Register %}
+  {% endblock %}
+  {% block Group %}
+  {% endblock %}
+  {% block Dashboard %}
+  {% endblock %}
+  {% block Employee %}
+  {% endblock %}
+  {% block Footer %}
+  {% endblock %}
+  {% include 'javascript.html' %}
+
+</body>
+</html>

@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block Group %}
+    <div class="page-wrapper">
+        <!-- MENU SIDEBAR-->
+        {% include 'sidebar.html'%}
+        <!-- END MENU SIDEBAR-->
+        <section class ="message-section">
+              {% include 'messages.html'%}
+        </section>
+        <!-- PAGE CONTAINER-->
+        <div class="page-container2">
+        
+            <!-- HEADER DESKTOP-->
+            {% include 'header.html'%}
+            <!-- END HEADER DESKTOP-->
+<!-- Button trigger modal -->
+
+            <!-- Modal -->
+            <div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Add Group</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method = "post" action= "{% url 'group:addgroup' %}">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="addgroupinput">Group Name</label>
+                        <input type="text" class="form-control" name = 'group_name' id="addgroupinput" placeholder="Group Name">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Save changes</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+                </form>
+                </div>
+            </div>
+            </div>
+            <!-- BREADCRUMB-->
+            {% comment %} {% include 'breadcrumb.html' %} {% endcomment %}
+            <!-- END BREADCRUMB-->
+
+            <!-- MAIN CONTENT-->
+            <div class="main-content">
+                <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                    
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!-- DATA TABLE -->
+                                <div class="table-data__tool">
+                                    <div class="table-data__tool-left">
+                                        <div class="rs-select2--light rs-select2--md">
+                                            <select class="js-select2" name="property" id ="group-select">
+                                            {% for grp in groups %}
+                                                <option class="group-filter" {% if grp.id == selected %} selected="selected"{% endif %} value="{{grp.id}}">{{grp.name}}</option>
+                                            {% endfor %}
+                                            </select>
+                                            <div class="dropDownSelect2"></div>
+                                        </div>
+                                    </div>
+                                            
+                                        {% comment %} <div class="rs-select2--dark rs-select2--sm rs-select2--dark2">
+                                            <select class="js-select2" name="type">
+                                                <option selected="selected">Export</option>
+                                                <option value="">Option 1</option>
+                                                <option value="">Option 2</option>
+                                            </select>
+                                            <div class="dropDownSelect2"></div>
+                                        </div> {% endcomment %}
+                                    </div>
+                                </div>
+                                <div class="table-responsive table-responsive-data2">
+                                    <table class="table table-data2">
+                                        <thead>
+                                            <tr class = "tr-shadow">
+                                                <th width="5%">
+                                                    <label class="au-checkbox">
+                                                        <input type="checkbox">
+                                                        <span class="au-checkmark"></span>
+                                                    </label>
+                                                </th>
+                                                <th>Module Name</th>
+                                                <th >Add</th>
+                                                <th >View</th>
+                                                <th >Update</th>
+                                                <th >Delete</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id ="permission-table">
+                                            <tr class="tr-shadow" width="100%">
+                                                <td>
+                                                    <label class="au-checkbox">
+                                                        <input type="checkbox">
+                                                        <span class="au-checkmark"></span>
+                                                    </label>
+                                                </td>
+                                                <td colspan="7">Lori Lynch</td>
+                                            </tr>
+                                            <tr class="spacer"></tr>
+                                            {% for module in modules %}
+                                        <form method = "post" action= "{% url 'group:addpermission' module.id %}">
+                                          {% csrf_token %}
+                                            <tr class="tr-shadow">
+                                                <td>
+                                                    <label class="au-checkbox">
+                                                        <input type="checkbox">
+                                                        <span class="au-checkmark"></span>
+                                                    </label>
+                                                </td>
+                                                <td>{{ module.name }}</td>
+
+                                                <td>
+                                                    <label class="au-checkbox">
+                                                        <input name="add" type="checkbox" {% if module.permissions.add %}checked{% endif %}>
+                                                        <span class="au-checkmark"></span>
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="au-checkbox">
+                                                        <input name="view" type="checkbox" {% if module.permissions.view %}checked{% endif %}>
+                                                        <span class="au-checkmark"></span>
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="au-checkbox">
+                                                        <input name="update" type="checkbox" {% if module.permissions.update %}checked{% endif %}>
+                                                        <span class="au-checkmark"></span>
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <label class="au-checkbox">
+                                                        <input name="delete" type="checkbox" {% if module.permissions.delete %}checked{% endif %}>
+                                                        <span class="au-checkmark"></span>
+                                                    </label>
+                                                </td>
+
+                                                <td>
+                                                    <button type = "submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button> 
+                                                </td>
+                                            </tr>
+                                        </form>
+                                            <tr class="spacer"></tr>
+                                            {% endfor %}
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- END DATA TABLE -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+    {% comment %} document.addEventListener('DOMContentLoaded',function(){
+        document.getElementById('select2-group-select-container').addEventListener('change', function() {
+        const pk = document.getElementById('group-select').value; // Get the selected value
+        console.log(pk);
+        console.log(pk);
+        // If "Select Group" is chosen (value="0"), don't do anything
+        if (pk === "0") return;
+
+        // Create the URL with the selected group's ID
+        const url = `{% url 'group:permission' 0 %}`.replace('0', pk);
+
+        // Send the GET request
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest' // Indicate it's an AJAX request
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);  // Handle the response (e.g., update the page dynamically)
+        })
+        .catch(error => console.error('Error:', error));
+    });
+  
+
+    }); {% endcomment %}
+      </script>  
+    {% endblock %}
