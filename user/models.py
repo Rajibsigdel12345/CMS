@@ -4,10 +4,11 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class CustomUser(AbstractUser):
-  profile_pic = models.ImageField(upload_to='media', default='media/default.jpg')
+  profile_pic = models.ImageField(upload_to='media', default='media/default.png')
   
   def __str__(self):
     return self.username
+  
   def to_dict(self):
     return {
       'id': self.id,
@@ -20,4 +21,8 @@ class CustomUser(AbstractUser):
       'date_joined': self.date_joined,
     }
 
+  def save(self, *args, **kwargs):
+    if not self.profile_pic:
+      self.profile_pic = 'media/default.png'
+    return super().save(*args, **kwargs)
   

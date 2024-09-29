@@ -1,10 +1,10 @@
 from django.db.models import TextChoices
 
 class PermissionChoices(TextChoices):
-  ADD = 'add', 'Add'
-  VIEW = 'view', 'View'
-  UPDATE = 'update', 'Update'
-  DELETE = 'delete', 'Delete'
+  ADD = 'add', 'add'
+  VIEW = 'view', 'view'
+  UPDATE = 'update', 'update'
+  DELETE = 'delete', 'delete'
 
 class ModuleChoices(TextChoices):
   USER = 'User', 'User'

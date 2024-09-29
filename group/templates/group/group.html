@@ -5,9 +5,7 @@
         <!-- MENU SIDEBAR-->
         {% include 'sidebar.html'%}
         <!-- END MENU SIDEBAR-->
-        <section class ="message-section">
-              {% include 'messages.html'%}
-        </section>
+
         <!-- PAGE CONTAINER-->
         <div class="page-container2">
         
@@ -15,6 +13,9 @@
             {% include 'header.html'%}
             <!-- END HEADER DESKTOP-->
 <!-- Button trigger modal -->
+        <section class ="message-section">
+              {% include 'messages.html'%}
+        </section>
 
             <!-- Modal -->
             <div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -26,16 +27,17 @@
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method = "post" action= "{% url 'group:addgroup' %}">
+                <form id = "add-group-form", method  = "post">
+                {% csrf_token %}
                 <div class="modal-body">
-                    {% csrf_token %}
                     <div class="form-group">
                         <label for="addgroupinput">Group Name</label>
                         <input type="text" class="form-control" name = 'group_name' id="addgroupinput" placeholder="Group Name">
                     </div>
                 </div>
+            
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Save changes</button>
+                    <button type="submit" id = "add-group-btn" class="btn btn-success" data-dismiss= "modal">Save changes</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
                 </form>
@@ -131,7 +133,7 @@
                                                 <th colspan= "7">Name</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody id = "table-body">
                                                                 <tr class="spacer"></tr>
                         {% for group in groups %}
                             <tr class="tr-shadow">
@@ -178,6 +180,22 @@
         </div>
     </div>
       <script>
+      const displayMessage = (message, type)=>{
+          const message_section = document.querySelector('.message-section')
+          const alert = document.createElement('div')
+          alert.classList.add('alert', `alert-${type}`, 'alert-dismissible', 'fade', 'show')
+          alert.setAttribute('role', 'alert')
+          alert.innerHTML = `${message}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+          </button>`
+          message_section.appendChild(alert)
+          setTimeout(function(){
+              alert.remove()
+          }, 5000)
+      }
+
+
       const edit_form_element = document.getElementById('edit-group-form')
       document.querySelectorAll('button[data-target="#editGroup"]').forEach(button => {
           button.addEventListener('click', function() {
@@ -186,5 +204,70 @@
               edit_form_element.action = `{% url 'group:update_group' 0 %}`.replace('0', group_id)
           })
       })
+      const add_group_button = document.getElementById('add-group-btn')
+      let addGroup= function(e) {
+          e.preventDefault();
+          const group_name = document.getElementById('addgroupinput').value
+          document.getElementById('addgroupinput').value = ''
+          if (group_name === '' || group_name.trim().length===0) {
+              return
+          }
+          else{
+            fetch("{% url 'group:addgroup' %}", {
+                method : 'POST',
+                headers :{
+                    'Content-Type' : 'application/json',
+                    'X-CSRFToken' : '{{csrf_token}}'
+                },
+                body : JSON.stringify({
+                    group_name : group_name
+                })
+            }).then(async function(response){
+                if(response.ok){
+                    return response.json()
+                }
+                else{
+                    await response.json().then(data =>{
+                        throw data
+                    })
+                }
+            }).then(data =>{
+                const table_body = document.getElementById('table-body')
+                let url_string = '{% url 'group:permission' 0 %}'.replace('0', data.id)
+                let table_row = `<tr class="tr-shadow">
+                                <td>
+                                    <label class="au-checkbox">
+                                        <input type="checkbox">
+                                        <span class="au-checkmark"></span>
+                                    </label>
+                                </td>
+                                <td colspan="9">${data.name}</td>
+                                <td>
+                                    <button type="button" data-toggle="modal" data-target="#editGroup"data-group-id = "${data.id}">
+                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i> <span>Edit</span>
+                                    </button>
+                                </td>
+                                <td>
+                                <form method="get" action="${url_string}">
+                                    <button type="submit">
+                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                    </button>
+                                </form>
+                                </td>
+                            </tr>
+                
+                        <tr class="spacer"></tr>`
+                table_body.innerHTML += table_row
+                displayMessage(data.message, data.tag)
+            }).catch(error =>{
+                displayMessage(error.message, error.tag)
+            })
+                }
+            }
+      add_group_button.addEventListener('click', function(e){
+          e.preventDefault();
+          addGroup(e)
+      });
+      
     </script>  
 {% endblock %}

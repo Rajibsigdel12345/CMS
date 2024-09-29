@@ -143,13 +143,16 @@
                                 </ul>
                             </li>
                             <li>
-                                <a href="inbox.html">
-                                    <i class="fas fa-chart-bar"></i>Inbox</a>
-                                <span class="inbox-num">3</span>
+                                <a href="{% url 'user:index' %}">
+                                     <i class="fa fa-user" aria-hidden="true"></i>Profile</a>
                             </li>
                             <li>
-                                <a href="#">
-                                    <i class="fas fa-shopping-basket"></i>eCommerce</a>
+                                <a href="{% url 'group:index' %}">
+                                   <i class="fas fa-user-secret"></i>Groups</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'employee:index' %}">
+                                    <i class="fa fa-users" aria-hidden="true"></i>Employees</a>
                             </li>
                             <li class="has-sub">
                                 <a class="js-arrow" href="#">

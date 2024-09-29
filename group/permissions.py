@@ -28,10 +28,11 @@ def has_permission_class(module_para,permission_para):
       print(group)
       modules = Module.objects.filter(permission__contains={permission_para:True},customgroup__in=group,name=module_para)
       print(modules)
+      print(module_para,permission_para)
       for module in modules:
-        if not module or not module.permission.get(permission_para):
-          messages.error(request, 'You do not have permission to perform this action', extra_tags='danger')
-          return redirect(request.META.get('HTTP_REFERER')) if not module_para == 'User' and not permission_para=='view' else redirect('user:index')
-      return view_func(self,request, *args, **kwargs)
+        if module.permission.get(permission_para):
+          return view_func(self,request, *args, **kwargs)
+      messages.error(request, 'You do not have permission to perform this action', extra_tags='danger')
+      return redirect(request.META.get('HTTP_REFERER')) if not module_para == 'User' and not permission_para=='view' else redirect('user:index')
     return wrapper_func
   return decorator

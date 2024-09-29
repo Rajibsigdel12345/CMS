@@ -1,22 +1,21 @@
+import json
 from django.db import IntegrityError
 from django.shortcuts import redirect, render
 from django.views.generic import View
 from .permissions import has_permission, has_permission_class
 from .models import CustomGroup,Module
-from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+
+from . import choices
 
 # Create your views here.
 @login_required(login_url='user:user_login')
-@has_permission('Group','view')
+@has_permission(choices.ModuleChoices.GROUP.value,choices.PermissionChoices.VIEW.value)
 def index(request):
     groups = CustomGroup.objects.all().values('name','id')
-    # if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-    #     groups = CustomGroup.objects.to_dict()
-    #     print("i am here")
-    #     return JsonResponse(data={'groups': groups})
     context = {
         'groups': groups,
         'title': f'Group | {request.user.username}',
@@ -27,7 +26,7 @@ def index(request):
     return render(request, 'group/group.html', context = context)
 
 @login_required(login_url='user:user_login') 
-@has_permission('Permission','view')   
+@has_permission(choices.ModuleChoices.PERMISSION.value, choices.PermissionChoices.VIEW.value)   
 def permission(request, pk):
     print(pk, "pk")
     module = Module.objects.to_dict(pk)
@@ -52,15 +51,13 @@ class AddGroupView(LoginRequiredMixin,View):
             return CustomGroup.objects.get(pk = pk)
         except CustomGroup.DoesNotExist:
             return None
-    @has_permission_class('Group','add')       
+    @has_permission_class(choices.ModuleChoices.GROUP.value,choices.PermissionChoices.ADD.value)       
     def post(self, request,*args, **kwargs):        
-        name = request.POST.get('group_name')
+        name = json.loads(request.body).get('group_name')
         if len(name)<=0:
-            messages.error(request, 'Group name is required',extra_tags='danger')
-            return redirect('group:index')
+            return JsonResponse(data={'message': 'Empty Group Name','tag':'danger'},status =400,)
         if CustomGroup.objects.filter(name = name).exists():
-            messages.error(request, 'Group already exists',extra_tags='danger')
-            return redirect('group:index')
+            return JsonResponse(data={'message': 'Group already exists','tag':'danger'},status =400,)
         group = CustomGroup.objects.create(name = name)
         module_names = ['User','Group','Permission','Employees']
         modules = []
@@ -71,8 +68,13 @@ class AddGroupView(LoginRequiredMixin,View):
         
         group.module.set(modules)
         group.save()
-        messages.success(request, 'Group added')
-        return redirect('group:index')
+        data = {
+            'id': group.id,
+            'name': group.name,
+            'message': f'Group {group.name} added',
+            'tag': 'success'
+        }
+        return JsonResponse(data=data,status =200,)
 
 class UpdateGroupView(LoginRequiredMixin,View):
     login_url = 'user:user_login'
@@ -83,7 +85,7 @@ class UpdateGroupView(LoginRequiredMixin,View):
         except CustomGroup.DoesNotExist:
             return None
     
-    @has_permission_class('Group','update')
+    @has_permission_class(choices.ModuleChoices.GROUP.value,choices.PermissionChoices.UPDATE.value)
     def post(self, request,pk):
        try: 
             instance  = self.get_object(pk)
@@ -106,7 +108,7 @@ class AddPermissionView(LoginRequiredMixin,View):
         except Module.DoesNotExist:
             return None
     
-    @has_permission_class('Permission','update')
+    @has_permission_class(choices.ModuleChoices.PERMISSION.value,choices.PermissionChoices.UPDATE.value)
     def post (self, request,pk):
         instance = self.get_object(pk)
         data = request.POST.dict()

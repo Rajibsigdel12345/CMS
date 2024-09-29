@@ -2,7 +2,6 @@ from typing import Any
 from django.forms import ModelForm
 from django import forms
 
-from user.models import CustomUser
 from .models import Employee
 from user import validators 
 
