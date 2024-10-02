@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block Group %}
+{% block Users %}
     <div class="page-wrapper">
         <!-- MENU SIDEBAR-->
         {% include 'sidebar.html'%}
@@ -24,6 +24,42 @@
             <!-- BREADCRUMB-->
             {% comment %} {% include 'breadcrumb.html' %} {% endcomment %}
             <!-- END BREADCRUMB-->
+             <div class="modal fade" id="editUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Edit Group</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id ="edit-user-form" method = "post" action= "">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div id = "form-body" class="form-group">
+                        <label for="addgroupinput">Groups</label>
+                        {% for group in group_list %}
+                        <div class="form-group d-flex">
+                             <div class="input-group-text">
+      <input type="checkbox" aria-label="Checkbox for following text input" name = "{{group.name}}">
+    </div>
+                            <div>
+                                <label for="addgroupinput">{{ group.name }}</label>
+                            </div>
+                        </div>
+                        
+                        
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Save changes</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+                </form>
+                </div>
+            </div>
+            </div>
 
             <!-- MAIN CONTENT-->
             <div class="main-content ">
@@ -35,15 +71,6 @@
                                 <!-- DATA TABLE -->
                                 <div class="table-data__tool">
                                     <div class="table-data__tool-left">
-                                        <div class="rs-select2--light rs-select2--md">
-                                            <select class="js-select2" name="property">
-                                            <option selected="selected">All Properties</option>
-                                            {% for group in groups %}
-                                                <option value="{{group.id}}">{{group.name}}</option>
-                                            {% endfor %}
-                                            </select>
-                                            <div class="dropDownSelect2"></div>
-                                        </div>
                                         <div class="rs-select2--light rs-select2--sm">
                                             <select class="js-select2" name="time">
                                                 <option selected="selected">Today</option>
@@ -56,7 +83,7 @@
                                             <i class="zmdi zmdi-filter-list"></i>filters</button>
                                     </div>
                                     <div class="table-data__tool-right">
-                                    <a href="{% url 'employee:addemployee' %}" class="btn btn-info"><i class="zmdi zmdi-plus"></i> Add Employee</a>
+                                    <a href="{% url 'user:manage' %}" class="btn btn-info"><i class="zmdi zmdi-plus"></i> Add Users</a>
                                         <button class="au-btn au-btn-icon au-btn--green au-btn--small">
                                             <i class="zmdi zmdi-plus"></i> add item</button>
                                             
@@ -87,8 +114,8 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                                                <tr class="spacer"></tr>
-                        {% for employee in employees %}
+                          <tr class="spacer"></tr>
+                        {% for users in user_list %}
                             <tr class="tr-shadow">
                                 <td>
                                     <label class="au-checkbox">
@@ -96,14 +123,14 @@
                                         <span class="au-checkmark"></span>
                                     </label>
                                 </td>
-                                <td colspan="2">{{ employee.first_name}} {{employee.last_name}}</td>
-                                <td colspan="3">{{ employee.email}}</td>
-                                <td colspan="2">{{ employee.phone}}</td>
-                                <td colspan="2">{{ employee.address}}</td>
+                                <td colspan="2">{% if not users.first_name %}---{% else %} {{ users.first_name}} {% endif %} {% if not users.last_name %}---{% else %} {{users.last_name}} {% endif %}</td>
+                                <td colspan="2">{{ users.username}}</td>
+                                <td colspan="3">{{ users.email}}</td>
+                                <td colspan="2">{{ users.address}}</td>
                                 <td>
-                                    <a href="{% url 'employee:addemployee' employee.id %}">
+                                <button type="button" data-toggle="modal" data-target="#editUser"data-user-id = "{{users.id}}">
                                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i> <span>Edit</span>
-                                    </a>
+                                    </button>
                                 </td>
                                 {% comment %} <td>
                                 <form method="put" action="{% url 'group:addgroup' group.id %}">
@@ -136,12 +163,31 @@
         </div>
     </div>
       <script>
-      const edit_form_element = document.getElementById('edit-group-form')
-      document.querySelectorAll('button[data-target="#editGroup"]').forEach(button => {
+      const edit_form_element = document.getElementById('edit-user-form')
+      document.querySelectorAll('button[data-target="#editUser"]').forEach(button => {
           button.addEventListener('click', function() {
-              const group_id = this.getAttribute('data-group-id')
-              console.log(group_id)
-              edit_form_element.action = `{% url 'group:update_group' 0 %}`.replace('0', group_id)
+              const user_id = this.getAttribute('data-user-id')
+              console.log(user_id)
+              edit_form_element.action = `{% url 'user:manage' 0 %}`.replace('0', user_id)
+              fetch(`{% url 'user:manage' 0 %}`.replace('0', user_id), {
+                  method: 'GET',
+                  headers: {
+                      'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                }).then(response => response.json()
+                ).then(data => {
+                    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                        if (data.group.includes(checkbox.name)) {
+                            checkbox.checked = true
+                        } else {
+                            checkbox.checked = false
+                        }
+                    })
+                }).catch(error => {
+                    console.error(error)
+                })
+            
+
           })
       })
     </script>  

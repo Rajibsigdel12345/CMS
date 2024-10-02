@@ -5,4 +5,5 @@ app_name = 'employee'
 urlpatterns = [
               path('', index, name='index'),   
               path('add/', EmployeeAddView.as_view(), name='addemployee'),   
+              path('add/<int:pk>', EmployeeAddView.as_view(), name='addemployee'),   
  ]

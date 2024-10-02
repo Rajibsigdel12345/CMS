@@ -15,7 +15,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 @login_required(login_url='user:user_login')
 @has_permission(choices.ModuleChoices.EMPLOYEES.value,choices.PermissionChoices.VIEW.value)
 def index(request):
-  employees = Employee.objects.all().values('first_name','last_name','email','phone','address')
+  employees = Employee.objects.all().values('id','first_name','last_name','email','phone','address')
   print(employees)
   context = {
       'title': f'Employee | {request.user.username}',
@@ -30,12 +30,17 @@ class EmployeeAddView(LoginRequiredMixin,View):
   login_url = 'user:user_login'
  
   @has_permission_class(choices.ModuleChoices.EMPLOYEES.value,choices.PermissionChoices.ADD.value)
-  def get(self, request):
-    form = EmployeeForm()
+  def get(self, request, *args, **kwargs):
+    if kwargs.get('pk'):
+      employee = Employee.objects.get(pk=kwargs.get('pk'))
+      form = EmployeeForm(instance=employee)
+    else:
+      form = EmployeeForm()
     context = {
       'title': f'Employee | {request.user.username}',
       'url_pattern': 'employee:addemployee',
-      'form': form
+      'form': form,
+      'emp_id': kwargs.get('pk')
     }
     return render(request, 'employee/employee-add.html', context = context)
   

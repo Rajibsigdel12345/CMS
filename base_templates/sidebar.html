@@ -11,14 +11,15 @@
                     <div class="image img-cir img-120">
                         <img class = "profile_image"src="{{user.profile_pic.url}}" alt="John Doe" />
                     </div>
-                    <h4 class="name">{{user.username}}</h4>
+                    <h4 class="name">{{user.username|safe }}</h4>
+                    <h6 class="text-muted">{% if user.first_name%}{{user.first_name}}{%else%}--{% endif %} {% if user.last_name%}  {{user.last_name}} {%else%} --{%endif%} </h6>
                     <a id = 'logout'  href="{% url 'user:logout' %}?next={{request.path}}">Sign out</a>
                 </div>
                 <nav class="navbar-sidebar2">
                     <ul class="list-unstyled navbar__list">
                         <li>
                             <a href="{% url 'user:index' %}">
-                               <i class="fa fa-user" aria-hidden="true"></i>Profile</a>
+                               <i class="fa fa-home" aria-hidden="true"></i>Home</a>
                             {% comment %} <span class="inbox-num">3</span> {% endcomment %}
                         </li>
                         <li>
@@ -30,6 +31,10 @@
                         <li>
                             <a href="{% url 'employee:index' %}">
                                 <i class="fa fa-users" aria-hidden="true"></i>Employees</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'user:list_user' %}">
+                                <i class="fa fa-user" aria-hidden="true"></i>Users</a>
                         </li>
                         <li class="has-sub">
                             <a class="js-arrow" href="#">

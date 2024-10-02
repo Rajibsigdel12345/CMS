@@ -124,36 +124,25 @@
                                     </span>
                                 </a>
                                 <ul class="list-unstyled navbar__sub-list js-sub-list">
-                                    <li>
-                                        <a href="index.html">
-                                            <i class="fas fa-tachometer-alt"></i>Dashboard 1</a>
-                                    </li>
-                                    <li>
-                                        <a href="index2.html">
-                                            <i class="fas fa-tachometer-alt"></i>Dashboard 2</a>
-                                    </li>
-                                    <li>
-                                        <a href="index3.html">
-                                            <i class="fas fa-tachometer-alt"></i>Dashboard 3</a>
-                                    </li>
-                                    <li>
-                                        <a href="index4.html">
-                                            <i class="fas fa-tachometer-alt"></i>Dashboard 4</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="{% url 'user:index' %}">
-                                     <i class="fa fa-user" aria-hidden="true"></i>Profile</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'group:index' %}">
-                                   <i class="fas fa-user-secret"></i>Groups</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'employee:index' %}">
-                                    <i class="fa fa-users" aria-hidden="true"></i>Employees</a>
-                            </li>
+                                                            <li>
+                            <a href="{% url 'user:index' %}">
+                               <i class="fa fa-home" aria-hidden="true"></i>Home</a>
+                            {% comment %} <span class="inbox-num">3</span> {% endcomment %}
+                        </li>
+                        <li>
+                            <a href="{% url 'group:index' %}">
+                                <i class="fas fa-user-secret"></i>Groups</a>
+                            {% comment %} <span class="inbox-num">3</span> {% endcomment %}
+                        </li>
+                 
+                        <li>
+                            <a href="{% url 'employee:index' %}">
+                                <i class="fa fa-users" aria-hidden="true"></i>Employees</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'user:list_user' %}">
+                                <i class="fa fa-user" aria-hidden="true"></i>Users</a>
+                        </li>
                             <li class="has-sub">
                                 <a class="js-arrow" href="#">
                                     <i class="fas fa-trophy"></i>Features

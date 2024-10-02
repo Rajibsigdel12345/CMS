@@ -38,7 +38,7 @@
                                         <strong>Employee</strong>
                                         <small> Details</small>
                                     </div>
-                                    <form method = "post" action = "{% url 'employee:addemployee' %}">
+                                    <form id ="employee-form" method = "post" action = "">
                                     {% csrf_token %}
                                     <div class="card-body card-block">
                                          {% for field in form %}
@@ -54,7 +54,7 @@
                                               {% endif %}
                                           </div>
                                       {% endfor %}
-                                      <button type="submit" class="btn btn-primary">Add Employee</button>
+                                      <button type="submit" class="btn btn-primary">{% if emp_id %} Update{% else%}Add Employee {% endif %}</button>
                                     </div>
                                     </form>
                                 </div>
@@ -66,6 +66,7 @@
         </div>
     </div>
       <script>
+      document.getElementById('employee-form').action = `{% url 'employee:addemployee' %}` if !{{emp_id}} else `{% url 'employee:addemployee' 0 %}`.replace('0', {{emp_id}})
       const edit_form_element = document.getElementById('edit-group-form')
       document.querySelectorAll('button[data-target="#editGroup"]').forEach(button => {
           button.addEventListener('click', function() {

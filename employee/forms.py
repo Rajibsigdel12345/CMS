@@ -27,7 +27,7 @@ class EmployeeForm(ModelForm):
       'department': forms.TextInput(attrs={'class': 'form-control'}),
       'designation': forms.TextInput(attrs={'class': 'form-control'}),
       'salary': forms.NumberInput(attrs={'class': 'form-control'}),
-      'profile_pic': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+      'profile_pic': forms.FileInput(attrs={'class': 'form-control'}),
     }
     
   def clean(self) -> dict[str, Any]:
@@ -38,6 +38,8 @@ class EmployeeForm(ModelForm):
     return cleaned_data
   
   def save(self, commit: bool = ...) -> Any:
-    
-    return super().save()
+    if self.instance:
+      self.instance.save()
+      return self.instance
+    return super().save(commit=commit)
   
